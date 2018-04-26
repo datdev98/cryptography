@@ -15,10 +15,8 @@ def rounds(input, keys):
     for i in range(15):
         mixer(input, keys[i])
         swapper(input)
-        print("Round", i + 1, ":", convert_bin_array_to_hex(input), convert_bin_array_to_hex(keys[i]))
 
 
     mixer(input, keys[15])
-    print("Round 16:", convert_bin_array_to_hex(input), convert_bin_array_to_hex(keys[15]))
 
     return input

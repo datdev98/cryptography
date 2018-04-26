@@ -1,13 +1,14 @@
-from des import encrypt_one_block, decrypt_one_block
+from des import encrypt_text, decrypt_text
 from permutation import convert_bin_array_to_hex
 
-input = '0x123456abcd132536'
+input = 'Không có gì quý hơn độc lập tự do'
 key = '0xaabb09182736ccdd'
 
 print("Encrypt:")
-cipher_text = encrypt_one_block(input, key)
+cipher_text = encrypt_text(input, key)
+print(cipher_text)
 
 print()
-cipher_text = convert_bin_array_to_hex(cipher_text)
 print("Decrypt:")
-plain_text = decrypt_one_block(cipher_text, key)
+plain_text = decrypt_text(cipher_text, key)
+print(plain_text)

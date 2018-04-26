@@ -1,6 +1,7 @@
 from permutation import permutation, convert_to_bin_array, convert_bin_array_to_hex
 from rounds import rounds
 from key_generation import round_key_generator
+from text import convert_text_to_bin_array, convert_bin_array_to_block, convert_block_to_bin_array, convert_bin_array_to_text
 
 initial_permutation_array = [
     58, 50, 42, 34, 26, 18, 10, 2,
@@ -31,32 +32,49 @@ def final_permutation(input):
     return permutation(input, final_permutation_array)
 
 def encrypt_one_block(plain_text, key):
-    print("Plain text:", plain_text)
-    initial_permutation_result = initial_permutation(convert_to_bin_array(plain_text, 64))
-    print("After initial permutation:", convert_bin_array_to_hex(initial_permutation_result))
+    initial_permutation_result = initial_permutation(plain_text)
 
     keys = round_key_generator(convert_to_bin_array(key, 64))
     rounds_result = rounds(initial_permutation_result, keys)
-    print("After 16 rounds:", convert_bin_array_to_hex(rounds_result))
 
     cipher_text = final_permutation(rounds_result)
-    print("After final permutation:", convert_bin_array_to_hex(cipher_text))
 
     return cipher_text
     
 
 
 def decrypt_one_block(cipher_text, key):
-    print("Cipher text:", cipher_text)
-    initial_permutation_result = initial_permutation(convert_to_bin_array(cipher_text, 64))
-    print("After initial permutation:", convert_bin_array_to_hex(initial_permutation_result))
+    initial_permutation_result = initial_permutation(cipher_text)
 
     keys = round_key_generator(convert_to_bin_array(key, 64))
     keys.reverse()
     rounds_result = rounds(initial_permutation_result, keys)
-    print("After 16 rounds:", convert_bin_array_to_hex(rounds_result))
 
     plain_text = final_permutation(rounds_result)
-    print("After final permutation:", convert_bin_array_to_hex(plain_text))
 
     return plain_text
+
+def encrypt_text(text, key):
+    bin_array = convert_text_to_bin_array(text)
+    blocks_input = convert_bin_array_to_block(bin_array, 64)
+
+    block_output = []
+    for block in blocks_input:
+        block_output.append(encrypt_one_block(block, key))
+    
+    bin_array = convert_block_to_bin_array(block_output)
+    
+    return convert_bin_array_to_hex(bin_array)
+
+
+def decrypt_text(text, key):
+    bin_array = convert_to_bin_array(text, 0)
+    blocks_input = convert_bin_array_to_block(bin_array, 64)
+
+    block_output = []
+    for block in blocks_input:
+        block_output.append(decrypt_one_block(block, key))
+    
+    bin_array = convert_block_to_bin_array(block_output)
+    
+    return convert_bin_array_to_text(bin_array)
